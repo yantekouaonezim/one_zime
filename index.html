@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>one_zime</title>
+<style>
+:root{--bg:#fbfaf6;--ink:#10241c;--mute:#5b6b63;--green:#0b6b45;--gold:#f2b705;--line:#d9dfd9;--card:#fff;--err:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a15;--ink:#eef3ef;--mute:#9fb0a7;--green:#3fbf86;--line:#274036;--card:#14251d;--err:#ff8a80}}
+:root[data-theme="dark"]{--bg:#0e1a15;--ink:#eef3ef;--mute:#9fb0a7;--green:#3fbf86;--line:#274036;--card:#14251d;--err:#ff8a80}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Trebuchet MS",Verdana,sans-serif}
+main{max-width:30rem;margin:0 auto;padding:1.5rem 1.1rem 3rem}
+h1{font:700 2rem/1.1 Georgia,"Times New Roman",serif;margin:0 0 .3rem;letter-spacing:-.02em}
+h1 span{background:var(--gold);color:#10241c;padding:0 .35em;border-radius:.2em}
+h2{font:700 1.3rem/1.25 Georgia,serif;margin:0 0 .6rem}
+p{margin:.4rem 0}
+.sub{color:var(--mute);margin-bottom:1.6rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:1.1rem}
+.service{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;border-left:.4rem solid var(--gold)}
+.service b{display:block;font-size:1.1rem}
+.service small{color:var(--mute)}
+.price{font:700 2.4rem/1 Georgia,serif;color:var(--green);margin:.5rem 0}
+ul{padding-left:1.2rem;margin:.6rem 0 1.1rem}
+li{margin:.3rem 0}
+label{display:block;font-weight:700;margin:1rem 0 .3rem}
+input,select{width:100%;font:inherit;padding:.75rem;border:1px solid var(--line);border-radius:.6rem;background:var(--bg);color:var(--ink)}
+button.go{width:100%;font:700 1rem inherit;font-family:inherit;padding:.9rem;border:0;border-radius:.7rem;background:var(--green);color:#fff;cursor:pointer;margin-top:1.2rem}
+button.back{background:none;border:0;color:var(--mute);font:inherit;padding:.8rem 0 0;cursor:pointer;text-decoration:underline}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.err{color:var(--err);min-height:1.4em;margin-top:.6rem}
+.note{font-size:.88rem;color:var(--mute);margin-top:1.2rem}
+[hidden]{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>one<span>_</span>zime</h1>
+<p class="sub">Services en ligne, simples et rapides.</p>
+
+<section id="s0">
+  <h2>Nos services</h2>
+  <button class="card service" id="open">
+    <b>Création de carte CIP</b>
+    <small>Nous vous accompagnons dans la démarche.</small>
+  </button>
+</section>
+
+<section id="s1" hidden>
+  <div class="card">
+    <h2>Création de carte CIP</h2>
+    <div class="price">1 300 F</div>
+    <p>C’est le coût du service. Avant de continuer :</p>
+    <ul>
+      <li>rechargez votre compte Moov, Celtiis ou MTN d’au moins 1 300 F ;</li>
+      <li>assurez-vous d’avoir une bonne connexion internet.</li>
+    </ul>
+    <button class="go" id="next1">Suivant</button>
+    <button class="back" data-back="0">Retour</button>
+  </div>
+</section>
+
+<section id="s2" hidden>
+  <div class="card">
+    <h2>Vos informations</h2>
+    <form id="f" novalidate onsubmit="return false">
+      <label for="ravip">Numéro inscrit au RAVIP</label>
+      <input id="ravip" inputmode="numeric" autocomplete="off" placeholder="Votre numéro RAVIP">
+      <label for="tel">Votre numéro de téléphone</label>
+      <input id="tel" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="01XXXXXXXX">
+      <div class="err" id="err" role="alert"></div>
+      <button class="go" id="pay" type="button">Payer 1 300 F</button>
+    </form>
+    <button class="back" data-back="1">Retour</button>
+    <p class="note">Le paiement se valide sur votre téléphone avec votre code secret. one_zime est un service privé d’accompagnement, non affilié à l’administration.</p>
+  </div>
+</section>
+
+<section id="s3" hidden>
+  <div class="card">
+    <h2 id="r-title"></h2>
+    <p id="r-text"></p>
+    <button class="go" id="again">Retour à l’accueil</button>
+  </div>
+</section>
+</main>
+
+<script src="https://cdn.kkiapay.me/k.js"></script>
+<script>
+// ===== À REMPLIR =====
+const CONFIG = {
+  API_KEY: "VOTRE_CLE_PUBLIQUE_KKIAPAY", // clé publique du tableau de bord KkiaPay
+  SANDBOX: true,                          // passez à false quand les tests sont bons
+  BACKEND_URL: "/api/commande"            // votre serveur : vérifie le paiement puis enregistre la commande
+};
+// =====================
+
+const $ = id => document.getElementById(id);
+const show = n => { [0,1,2,3].forEach(i => $("s"+i).hidden = i !== n); window.scrollTo(0,0); };
+$("open").onclick = () => show(1);
+$("next1").onclick = () => show(2);
+$("again").onclick = () => show(0);
+document.querySelectorAll("[data-back]").forEach(b => b.onclick = () => show(+b.dataset.back));
+
+let saisie = null;
+const result = (t, m) => { $("r-title").textContent = t; $("r-text").textContent = m; show(3); };
+
+$("pay").onclick = () => {
+  const ravip = $("ravip").value.trim(), tel = $("tel").value.replace(/\s/g, "");
+  const err = m => { $("err").textContent = m; };
+  if (ravip.length < 6) return err("Entrez votre numéro RAVIP.");
+  if (!/^01\d{8}$/.test(tel)) return err("Entrez un numéro à 10 chiffres, qui commence par 01.");
+  err("");
+  saisie = { ravip, tel };
+  openKkiapayWidget({
+    amount: 1300,
+    api_key: CONFIG.API_KEY,
+    sandbox: CONFIG.SANDBOX,
+    name: "one_zime",
+    reason: "Création de carte CIP",
+    paymentmethods: ["momo"],
+    theme: "#0b6b45"
+  });
+};
+
+// Paiement réussi : on envoie l’identifiant de transaction à VOTRE serveur,
+// qui doit le vérifier auprès de KkiaPay avant de valider la commande.
+async function onSuccess(resp) {
+  try {
+    const r = await fetch(CONFIG.BACKEND_URL, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ ...saisie, transactionId: resp.transactionId })
+    });
+    if (!r.ok) throw new Error();
+    result("Paiement confirmé", "Nous avons bien reçu votre demande de carte CIP. Nous vous contacterons sur le numéro indiqué.");
+  } catch (e) {
+    result("Paiement reçu, commande non enregistrée", "Gardez votre référence de paiement : " + resp.transactionId + ". Contactez-nous avec cette référence.");
+  }
+}
+function onFailed() { result("Paiement non abouti", "Vérifiez votre solde et votre connexion, puis réessayez."); }
+
+if (typeof addKkiapayListener === "function") {
+  addKkiapayListener("success", onSuccess);
+  addKkiapayListener("failed", onFailed);
+} else if (typeof addSuccessListener === "function") {
+  addSuccessListener(onSuccess);
+  addFailedListener(onFailed);
+}
+</script>
+</body>
+</html>

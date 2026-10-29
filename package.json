@@ -1,0 +1,9 @@
+{
+  "name": "one-zime",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@kkiapay-org/nodejs-sdk": "latest",
+    "@netlify/blobs": "latest"
+  }
+}

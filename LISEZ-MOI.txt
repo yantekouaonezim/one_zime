@@ -1,0 +1,13 @@
+MISE EN LIGNE DE one_zime (Netlify)
+
+1. Mettez ce dossier sur GitHub (nouveau dépôt), puis sur netlify.com : "Add new site" > "Import from Git".
+   (Le glisser-déposer simple ne suffit pas : le serveur a besoin d'installer ses modules.)
+2. Dans Netlify > Site configuration > Environment variables, ajoutez :
+   KKIAPAY_PUBLIC_KEY   = votre clé publique KkiaPay
+   KKIAPAY_PRIVATE_KEY  = votre clé privée
+   KKIAPAY_SECRET       = votre clé secrète
+   KKIAPAY_SANDBOX      = true   (mettre false pour le paiement réel)
+   ADMIN_TOKEN          = un long mot de passe de votre choix
+3. Dans index.html, remplacez VOTRE_CLE_PUBLIQUE_KKIAPAY par votre clé publique et SANDBOX par false pour le réel.
+4. Redéployez. Testez en mode sandbox avec les numéros de test KkiaPay.
+5. Pour voir les commandes : https://VOTRE-SITE.netlify.app/api/liste?token=VOTRE_ADMIN_TOKEN
